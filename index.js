@@ -57,20 +57,6 @@ app.get('/api/track/', (req, res) => {
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 app.listen(port, () => {
   console.log(`Server is listening to port: ${port}`)
 });
