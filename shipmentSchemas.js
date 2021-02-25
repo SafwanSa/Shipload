@@ -26,3 +26,16 @@ exports.shipmentSchema = Joi.object({
     packages: Joi.array().items(packageSchema)
   })
 });
+
+exports.trackShipmentSchema = Joi.object({
+  tracking_number: Joi.number().required(),
+  status_code: Joi.string().required(),
+  status_description: Joi.string().required(),
+  tracking_status: Joi.string().required(),
+  // carrier_status_description: Joi.string().required(),
+  ship_date: Joi.string().required(),
+  estimated_delivery_date: Joi.string().required(),
+  actual_delivery_date: Joi.string(),
+});
+
+

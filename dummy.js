@@ -1,6 +1,6 @@
-exports.shipments = [
+exports.shipments = [];
 
-];
+exports.trackedShipments = [];
 
 /**
  *  {
