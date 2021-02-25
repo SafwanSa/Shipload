@@ -11,7 +11,6 @@ app.use(cors());
 
 const port = process.env.PORT || 30000;
 
-
 function validateShipment(shipment) {
   return shipmentSchema.validate(shipment);
 }
