@@ -66,9 +66,20 @@ app.get('/api/track/', (req, res) => {
   res.send(shipment);
 });
 
-// Get Label
-app.get('/api/label', (req, res) => {
-  getLabel(res);
+// Get Label of shipment/s
+app.post('/api/labelizer', (req, res) => {
+  // There is a value in the body called trackingNumbers
+  if(!req.body.trackingNumbers) return res.status(400)
+  .send('Tracking numbers are missing!');
+
+  const trackingNumbers = req.body.trackingNumbers;
+  const requiredShipments = shipments.filter(sh => {
+    return trackingNumbers.includes(sh.tracking_number); 
+  })
+
+  if(requiredShipments.length === 0) return res.status(404).send("Shipments not found!");
+
+  getLabel(res, requiredShipments);
 });
 
 app.listen(port, () => {
