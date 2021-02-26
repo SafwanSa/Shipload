@@ -45,7 +45,7 @@ app.get('/api/shipments', (_, res) => {
 });
 
 // Add Shipment
-app.post('/api', (req, res) => {
+app.post('/api/shipments', (req, res) => {
   const { error } = validateShipment(req.body);
   if(error) return res.status(400).send(error.details[0].message);
   const shipment = req.body
