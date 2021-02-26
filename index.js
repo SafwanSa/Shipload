@@ -4,6 +4,7 @@ const Joi = require('joi');
 const { shipmentSchema, trackShipmentSchema } = require('./shipmentSchemas');
 const { StatusCodes, StatusDescriptions, TrackingStatuses } = require('./statuses');
 const { shipments, trackedShipments } = require('./dummy');
+const { getLabel } = require('./label');
 
 const app = express();
 app.use(express.json());
@@ -63,6 +64,11 @@ app.get('/api/track/', (req, res) => {
   const shipment = trackedShipments.find(sh => sh.tracking_number === tracking_number);
   if(!shipment) return res.status(404).send("Shipment not found..!"); 
   res.send(shipment);
+});
+
+// Get Label
+app.get('/api/label', (req, res) => {
+  getLabel(res);
 });
 
 app.listen(port, () => {
