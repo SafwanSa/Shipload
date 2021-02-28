@@ -4,8 +4,9 @@ const personSchema = Joi.object({
   phone_number: Joi.string().required(),
   country: Joi.string().required(),
   city: Joi.string().required(),
-  address_line1: Joi.string().required(),
-  address_line2: Joi.string().min(0)
+  address1: Joi.string().required(),
+  address2: Joi.string().min(0),
+  postal_code: Joi.number().required()
 });
 
 const packageSchema = {

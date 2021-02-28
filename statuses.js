@@ -6,7 +6,7 @@ exports.StatusCodes = {
   UN: "UN",
   AT: "AT",
   NY: "NY"
-}
+};
 
 exports.StatusDescriptions = {
   AC: "Accepted",
@@ -15,8 +15,8 @@ exports.StatusDescriptions = {
   EX: "Exception",
   UN: "Unknown",
   AT: "Delivery Attempt",
-  NY: "Not Yet Un System"
-}
+  NY: "Not Yet In System"
+};
 
 exports.TrackingStatuses = {
   AC: "N/A",
@@ -26,4 +26,4 @@ exports.TrackingStatuses = {
   UN: "unknown",
   AT: "N/A",
   NY: "in_transit"
-}
+};

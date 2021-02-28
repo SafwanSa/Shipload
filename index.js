@@ -6,7 +6,7 @@ const { shipmentSchema, trackShipmentSchema } = require('./shipmentSchemas');
 const { StatusCodes, StatusDescriptions, TrackingStatuses } = require('./statuses');
 const { shipments, trackedShipments } = require('./dummy');
 const { getLabel } = require('./label');
-const { query } = require('./db');
+const createShipment = require('./create_shipment');
 
 
 const port = process.env.PORT || 30000;
@@ -20,7 +20,7 @@ function validateShipment(shipment) {
 }
 
 function generateRandomId() {
-  return Math.round(Math.random() * Math.pow(10, 12));
+  return Math.round(Math.random() * Math.pow(10, 6));
 }
 
 function setTrackedShipment(shipment) {
@@ -44,16 +44,21 @@ app.get('/api/shipments', (_, res) => {
 });
 
 // Add Shipment
-app.post('/api/shipments', (req, res) => {
+app.post('/api/shipments', async (req, res) => {
   const { error } = validateShipment(req.body);
   if(error) return res.status(400).send(error.details[0].message);
   const shipment = req.body
-  shipment.tracking_number = generateRandomId();
-  shipment.shipment_id = `${shipments.length + 1}`;
-  trackedShipment = setTrackedShipment(shipment);
-  shipments.push(shipment);
-  trackedShipments.push(trackedShipment)
-  res.send(shipment);
+  shipment.shipment.tracking_number = generateRandomId();
+  // trackedShipment = setTrackedShipment(shipment);
+  const result = await createShipment(shipment.shipment);
+  console.log(result);
+  if(result === 200) {
+    shipments.push(shipment);
+    // trackedShipments.push(trackedShipment)
+    res.send(shipment);
+  }else {
+    res.status(400).send('Something Wrong Happened with your shipment!..');
+  }
 });
 
 // Track Shipment
@@ -83,12 +88,7 @@ app.post('/api/labelizer', (req, res) => {
 
 // Hook
 app.get('/api/hook', (req, res) => {
-  const sql = "SELECT * FROM test;";
-  var rows = [];
-  query(sql).then(result => {
-    
-    res.send(result);
-  });
+  
 });
 
 app.listen(port, () => {
