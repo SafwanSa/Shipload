@@ -1,23 +1,20 @@
 const express = require('express');
 const cors = require('cors');
 const Joi = require('joi');
+
 const { shipmentSchema, trackShipmentSchema } = require('./shipmentSchemas');
 const { StatusCodes, StatusDescriptions, TrackingStatuses } = require('./statuses');
 const { shipments, trackedShipments } = require('./dummy');
 const { getLabel } = require('./label');
 
+const port = process.env.PORT || 30000;
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-const port = process.env.PORT || 30000;
 
 function validateShipment(shipment) {
   return shipmentSchema.validate(shipment);
-}
-
-function validateTrackShipmentSchema(trackedShipment) {
-  return trackShipmentSchema.validate(trackedShipment);
 }
 
 function generateRandomId() {
@@ -82,7 +79,12 @@ app.post('/api/labelizer', (req, res) => {
   getLabel(res, requiredShipments);
 });
 
+// Hook
+app.get('/api/hook', (req, res) => {
+  console.log(req.body);
+  res.send({"Message": "Received"});
+});
+
 app.listen(port, () => {
   console.log(`Server is listening to port: ${port}`)
 });
-
