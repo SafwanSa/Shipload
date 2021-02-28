@@ -6,6 +6,8 @@ const { shipmentSchema, trackShipmentSchema } = require('./shipmentSchemas');
 const { StatusCodes, StatusDescriptions, TrackingStatuses } = require('./statuses');
 const { shipments, trackedShipments } = require('./dummy');
 const { getLabel } = require('./label');
+const { query } = require('./db');
+
 
 const port = process.env.PORT || 30000;
 const app = express();
@@ -81,8 +83,12 @@ app.post('/api/labelizer', (req, res) => {
 
 // Hook
 app.get('/api/hook', (req, res) => {
-  console.log(req.body);
-  res.send({"Message": "Received"});
+  const sql = "SELECT * FROM test;";
+  var rows = [];
+  query(sql).then(result => {
+    
+    res.send(result);
+  });
 });
 
 app.listen(port, () => {
