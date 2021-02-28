@@ -22,8 +22,8 @@ exports.getLabel = function (res, shipments) {
       // the stream is at its end, so push the resulting base64 string to the response
       // res.set('Content-Type', "application/octet-stream");
       // res.set('Content-Disposition', "attachment");
-      res.write(finalString, 'base64');
-      // res.json(finalString);
+      // res.write(finalString, 'base64');
+      res.json(finalString);
   });
 }
 
