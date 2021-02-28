@@ -1,8 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const Joi = require('joi');
 
-const { shipmentSchema, trackShipmentSchema } = require('./shipmentSchemas');
+const { shipmentSchema } = require('./shipmentSchemas');
 const { StatusCodes, StatusDescriptions, TrackingStatuses } = require('./statuses');
 const { shipments, trackedShipments } = require('./dummy');
 const { getLabel } = require('./label');
