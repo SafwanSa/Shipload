@@ -20,16 +20,6 @@ function generateRandomId() {
   return Math.round(Math.random() * Math.pow(10, 6));
 }
 
-function setTrackedShipment(shipment) {
-  return trackedShipment = {
-    shipment_id: shipment.shipment_id,
-    tracking_number: shipment.tracking_number,
-    status_code: StatusCodes.AC,
-    status_description: StatusDescriptions.AC,
-    tracking_status: TrackingStatuses.AC,
-  }
-}
-
 
 app.get('/api', (_, res) => {
   res.send({"message": "Hello World"});
@@ -47,12 +37,9 @@ app.post('/api/shipments', async (req, res) => {
   if(error) return res.status(400).send(error.details[0].message);
   const shipment = req.body
   shipment.shipment.tracking_number = generateRandomId();
-  // trackedShipment = setTrackedShipment(shipment);
   const result = await createShipment(shipment.shipment);
   console.log(result);
   if(result === 200) {
-    shipments.push(shipment);
-    // trackedShipments.push(trackedShipment)
     res.send(shipment);
   }else {
     res.status(400).send('Something Wrong Happened with your shipment!..');
