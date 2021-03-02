@@ -62,13 +62,15 @@ app.post('/api/labelizer', async (req, res) => {
   .send('Tracking numbers are missing!');
 
   const trackingNumbers = req.body.trackingNumbers;
-  const requiredShipments = await getShipment.filter(sh => {
-    return trackingNumbers.includes(sh.tracking_number); 
+  const shipments = await getShipment();
+
+  const requestedShipment = shipments.filter(sh => {
+    return trackingNumbers.includes(sh.shipment.tracking_number);
   })
 
-  if(requiredShipments.length === 0) return res.status(404).send("Shipments not found!");
+  if(requestedShipment.length === 0) return res.status(404).send("Shipments not found!");
 
-  getLabel(res, requiredShipments);
+  getLabel(res, requestedShipment);
 });
 
 // Hook
