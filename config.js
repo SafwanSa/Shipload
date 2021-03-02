@@ -5,4 +5,5 @@ const config = {
   database: process.env.DB_NAME || 'freedbtech_shipmentsapi',
 };
 
+
 module.exports = config;

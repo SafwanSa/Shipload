@@ -7,6 +7,7 @@ const { getLabel } = require('./label');
 const createShipment = require('./create_shipment');
 const getShipment = require('./get_shipments');
 const trackShipment = require('./track_shipment');
+const uploadFile = require('./create_bucket.js');
 
 const port = process.env.PORT || 30000;
 const app = express();
@@ -76,7 +77,7 @@ app.post('/api/labelizer', async (req, res) => {
 
 // Hook
 app.get('/api/hook', (req, res) => {
-  
+    uploadFile('./1614723735940-Zid_Coding_Task2.pdf');
 });
 
 const storage = multer.diskStorage({
