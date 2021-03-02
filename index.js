@@ -82,7 +82,7 @@ app.get('/api/hook', (req, res) => {
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     console.log("dest");
-    cb(null, "uploads/")
+    cb(null, "/")
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname)
