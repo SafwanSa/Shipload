@@ -2,35 +2,35 @@ const { exist } = require('joi');
 const mysql = require('mysql2/promise');
 const config = require('./config');
 
-const shipment =  {
-    tracking_number: 84634875,
-    ship_to: {
-      name: "Safwan Saigh",
-      phone_number: "0534501056",
-      country: "Saudi Arabia",
-      city: "Jeddah",
-      address1: "As Salamah",
-      address2: "Ibn Udyes",
-      postal_code: 13334
-    },
-    ship_from: {
-      name: "Fozan Khalawi",
-      phone_number: "0556800181",
-      country: "Saudi Arabia",
-      city: "Medinah",
-      address1: "Al haramh",
-      address2: "Loly",
-      postal_code: 44687
-    },
-    packages: [{
-      weight: 12,
-      dimentions: {
-        height: 4,
-          width: 3,
-          length: 2
-      }
-    }]
-  };
+// const shipment =  {
+//     tracking_number: 84634875,
+//     ship_to: {
+//       name: "Safwan Saigh",
+//       phone_number: "0534501056",
+//       country: "Saudi Arabia",
+//       city: "Jeddah",
+//       address1: "As Salamah",
+//       address2: "Ibn Udyes",
+//       postal_code: 13334
+//     },
+//     ship_from: {
+//       name: "Fozan Khalawi",
+//       phone_number: "0556800181",
+//       country: "Saudi Arabia",
+//       city: "Medinah",
+//       address1: "Al haramh",
+//       address2: "Loly",
+//       postal_code: 44687
+//     },
+//     packages: [{
+//       weight: 12,
+//       dimentions: {
+//         height: 4,
+//           width: 3,
+//           length: 2
+//       }
+//     }]
+//   };
 
 module.exports = async function createShipment(shipment) {
   const connection = await mysql.createConnection(config);

@@ -3,16 +3,14 @@ const cors = require('cors');
 
 const { shipmentSchema } = require('./shipmentSchemas');
 const { StatusCodes, StatusDescriptions, TrackingStatuses } = require('./statuses');
-const { shipments, trackedShipments } = require('./dummy');
 const { getLabel } = require('./label');
 const createShipment = require('./create_shipment');
-
+const getShipment = require('./get_shipments');
 
 const port = process.env.PORT || 30000;
 const app = express();
 app.use(express.json());
 app.use(cors());
-
 
 function validateShipment(shipment) {
   return shipmentSchema.validate(shipment);
@@ -38,8 +36,9 @@ app.get('/api', (_, res) => {
 });
 
 // List all shipments
-app.get('/api/shipments', (_, res) => {
-  res.send(shipments);
+app.get('/api/shipments', async (_, res) => {
+  const shipmentss = await getShipment();
+  res.send(shipmentss);
 });
 
 // Add Shipment
