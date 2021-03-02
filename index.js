@@ -2,10 +2,10 @@ const express = require('express');
 const cors = require('cors');
 
 const { shipmentSchema } = require('./shipmentSchemas');
-const { StatusCodes, StatusDescriptions, TrackingStatuses } = require('./statuses');
 const { getLabel } = require('./label');
 const createShipment = require('./create_shipment');
 const getShipment = require('./get_shipments');
+const trackShipment = require('./track_shipment');
 
 const port = process.env.PORT || 30000;
 const app = express();
@@ -37,8 +37,8 @@ app.get('/api', (_, res) => {
 
 // List all shipments
 app.get('/api/shipments', async (_, res) => {
-  const shipmentss = await getShipment();
-  res.send(shipmentss);
+  const shipments = await getShipment();
+  res.send(shipments);
 });
 
 // Add Shipment
@@ -60,10 +60,10 @@ app.post('/api/shipments', async (req, res) => {
 });
 
 // Track Shipment
-app.get('/api/track/', (req, res) => {
+app.get('/api/track/', async (req, res) => {
   const tracking_number = parseInt(req.query.tracking_number);
-  if(!tracking_number) return res.send(404);
-  const shipment = trackedShipments.find(sh => sh.tracking_number === tracking_number);
+  if(!tracking_number) return res.send(400).send("Enter the tracking number correctly!");
+  const shipment = await trackShipment(tracking_number);
   if(!shipment) return res.status(404).send("Shipment not found..!"); 
   res.send(shipment);
 });
