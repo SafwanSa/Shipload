@@ -56,13 +56,13 @@ app.get('/api/track/', async (req, res) => {
 });
 
 // Get Label of shipment/s
-app.post('/api/labelizer', (req, res) => {
+app.post('/api/labelizer', async (req, res) => {
   // There is a value in the body called trackingNumbers
   if(!req.body.trackingNumbers) return res.status(400)
   .send('Tracking numbers are missing!');
 
   const trackingNumbers = req.body.trackingNumbers;
-  const requiredShipments = shipments.filter(sh => {
+  const requiredShipments = await getShipment.filter(sh => {
     return trackingNumbers.includes(sh.tracking_number); 
   })
 
