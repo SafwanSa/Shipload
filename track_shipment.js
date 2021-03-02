@@ -9,10 +9,4 @@ const trackShipment = async function (trackingNumber) {
   return results[0];
 }
 
-function shipmentMaker(result) {
-  return {
-    
-  };
-}
-
 module.exports = trackShipment;
