@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const multer = require("multer")
 
 const { shipmentSchema } = require('./shipmentSchemas');
 const { getLabel } = require('./label');
@@ -77,6 +78,32 @@ app.post('/api/labelizer', async (req, res) => {
 app.get('/api/hook', (req, res) => {
   
 });
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    console.log("dest");
+    cb(null, "uploads/")
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname)
+  },
+})
+
+const uploadStorage = multer({ storage: storage })
+
+// Single file
+app.post("/upload/single", uploadStorage.single("file"), (req, res) => {
+  return res.send("Single file")
+})
+//Multiple files
+app.post("/upload/multiple", uploadStorage.array("file", 10), (req, res) => {
+  return res.send("Multiple files")
+})
+
+
+
+
+
 
 app.listen(port, () => {
   console.log(`Server is listening to port: ${port}`)
