@@ -23,18 +23,18 @@ function generateRandomId() {
 }
 
 
-app.get('/api', (_, res) => {
+app.get('/v1', (_, res) => {
   res.send({"message": "Hello World"});
 });
 
 // List all shipments
-app.get('/api/shipments', async (_, res) => {
+app.get('/v1/shipments', async (_, res) => {
   const shipments = await getShipment();
   res.send(shipments);
 });
 
 // Add Shipment
-app.post('/api/shipments', async (req, res) => {
+app.post('/v1/shipments', async (req, res) => {
   const { error } = validateShipment(req.body);
   if(error) return res.status(400).send(error.details[0].message);
   const shipment = req.body
@@ -49,7 +49,7 @@ app.post('/api/shipments', async (req, res) => {
 });
 
 // Track Shipment
-app.get('/api/track/', async (req, res) => {
+app.get('/v1/track/', async (req, res) => {
   const tracking_number = parseInt(req.query.tracking_number);
   if(!tracking_number) return res.send(400).send("Enter the tracking number correctly!");
   const shipment = await trackShipment(tracking_number);
@@ -58,7 +58,7 @@ app.get('/api/track/', async (req, res) => {
 });
 
 // Get Label of shipment/s
-app.post('/api/labelizer', async (req, res) => {
+app.post('/v1/labelizer', async (req, res) => {
   // There is a value in the body called trackingNumbers
   if(!req.body.trackingNumbers) return res.status(400)
   .send('Tracking numbers are missing!');
@@ -76,11 +76,11 @@ app.post('/api/labelizer', async (req, res) => {
 });
 
 // Hook
-app.get('/api/hook', (req, res) => {
+app.get('/v1/hook', (req, res) => {
     // uploadFile('./img.png');
 });
 
-app.post('/upload', upload.array('image', 1), (req, res) => {
+app.post('/v1/upload', upload.array('image', 1), (req, res) => {
   console.log(req.files[0].location);
   res.send({ file: req.file });
  });
