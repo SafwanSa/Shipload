@@ -1,9 +1,8 @@
 const config = {
-  host: process.env.DB_HOST || 'freedb.tech',
-  user: process.env.DB_USER || 'freedbtech_safwanoz',
-  password: process.env.DB_PASSWORD || 'safwanoz',
-  database: process.env.DB_NAME || 'freedbtech_shipmentsapi',
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME ,
 };
-
 
 module.exports = config;

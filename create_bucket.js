@@ -1,35 +1,36 @@
-const AWS = require('aws-sdk');
-const fs = require('fs');
+const aws = require('aws-sdk');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+const dotenv = require('dotenv');
+dotenv.config();
 
-const ID = 'AKIAIRHLOZ3FEOMDGPZQ';
-const SECRET = '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';
-
-// The name of the bucket that you have created
-const BUCKET_NAME = 'shipmentsdocss';
-
-const s3 = new AWS.S3({
-  accessKeyId: ID,
-  secretAccessKey: SECRET
+aws.config.update({
+ secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+ accessKeyId: process.env.AWS_ACCESS_KEY_ID,
 });
 
-const uploadFile = (fileName) => {
-  // Read content from the file
-  const fileContent = fs.readFileSync(fileName);
+const s3 = new aws.S3();
 
-  // Setting up S3 upload parameters
-  const params = {
-      Bucket: BUCKET_NAME,
-      Key: 'test.pdf', // File name you want to save as in S3
-      Body: fileContent
-  };
-
-  // Uploading files to the bucket
-  s3.upload(params, function(err, data) {
-      if (err) {
-          throw err;
-      }
-      console.log(`File uploaded successfully. ${data.Location}`);
-  });
+/* In case you want to validate your file type */
+const fileFilter = (req, file, cb) => {
+ if (true) {
+  cb(null, true);
+ } else {
+  cb(new Error('Wrong file type, only upload JPEG and/or PNG !'), 
+  false);
+ }
 };
 
-module.exports = uploadFile;
+const upload = multer({
+fileFilter: fileFilter,
+storage: multerS3({
+ s3,
+ bucket: process.env.S3_BUCKET,
+ key: function(req, file, cb) {
+   req.file = Date.now() + file.originalname;
+   cb(null, Date.now() + file.originalname);
+  }
+ })
+});
+
+module.exports = upload;

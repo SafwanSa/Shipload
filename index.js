@@ -1,13 +1,13 @@
 const express = require('express');
 const cors = require('cors');
-const multer = require("multer")
+
 
 const { shipmentSchema } = require('./shipmentSchemas');
 const { getLabel } = require('./label');
 const createShipment = require('./create_shipment');
 const getShipment = require('./get_shipments');
 const trackShipment = require('./track_shipment');
-const uploadFile = require('./create_bucket.js');
+const upload = require('./create_bucket.js');
 
 const port = process.env.PORT || 30000;
 const app = express();
@@ -77,33 +77,13 @@ app.post('/api/labelizer', async (req, res) => {
 
 // Hook
 app.get('/api/hook', (req, res) => {
-    uploadFile('./1614723735940-Zid_Coding_Task2.pdf');
+    // uploadFile('./img.png');
 });
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "")
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname)
-  },
-})
-
-const uploadStorage = multer({ storage: storage })
-
-// Single file
-app.post("/upload/single", uploadStorage.single("file"), (req, res) => {
-  return res.send("Single file")
-})
-//Multiple files
-app.post("/upload/multiple", uploadStorage.array("file", 10), (req, res) => {
-  return res.send("Multiple files")
-})
-
-
-
-
-
+app.post('/upload', upload.array('image', 1), (req, res) => {
+  console.log(req.files[0].location);
+  res.send({ file: req.file });
+ });
 
 app.listen(port, () => {
   console.log(`Server is listening to port: ${port}`)
