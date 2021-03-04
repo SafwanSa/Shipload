@@ -7,7 +7,7 @@ const { getLabel } = require('./label');
 const createShipment = require('./create_shipment');
 const getShipment = require('./get_shipments');
 const trackShipment = require('./track_shipment');
-const upload = require('./create_bucket.js');
+const upload = require('./upload_attachments.js');
 
 const port = process.env.PORT || 30000;
 const app = express();
