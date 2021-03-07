@@ -21,18 +21,20 @@ function generateRandomId() {
   return Math.round(Math.random() * Math.pow(10, 6));
 }
 
-const dbURL = "mongodb+srv://safwanoz:safwanoz@shipments-cluster.tapab.mongodb.net/shipmentsDB?retryWrites=true&w=majority";
+function dbConnect() {
+  mongoose.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+      app.listen(port, () => {
+        console.log(`Server is listening to port: ${port}`)
+      });
+      console.log("Database connection established");
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
 
-mongoose.connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true })
-.then(() => {
-  app.listen(port, () => {
-    console.log(`Server is listening to port: ${port}`)
-  });
-  console.log("Database connection established");
-})
-.catch((error) => {
-  console.log(error);
-});
+dbConnect();
 
 app.get('/v1', (_, res) => {
   res.send({"message": "Hello World"});
