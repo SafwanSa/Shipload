@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const Shipment = require('./models/shipment');
+const TrackingStatus = require('./models/trackingStatus');
 
 const { shipmentSchema } = require('./shipmentSchemas');
 const { getLabel } = require('./label');
@@ -42,32 +43,62 @@ app.get('/v1', (_, res) => {
 
 // List all shipments
 app.get('/v1/shipments', async (_, res) => {
-  const shipments = await getShipment();
-  res.send(shipments);
+ Shipment.find()
+  .then((result) => {
+    res.send(result);
+  })
+  .catch((error) => {
+    res.status(404).send(error);
+  })
+});
+
+app.get('/v1/statuses', async (_, res) => {
+  TrackingStatus.find()
+  .then((result) => {
+    res.send(result);
+  }).catch((err) => {
+    console.log(err);
+    res.send(err);
+  });
 });
 
 // Add Shipment
-app.post('/v1/shipments', async (req, res) => {
+app.post('/v1/create-shipment', async (req, res) => {
   const { error } = validateShipment(req.body);
   if(error) return res.status(400).send(error.details[0].message);
-  const shipment = req.body
-  shipment.shipment.tracking_number = generateRandomId();
-  const result = await createShipment(shipment.shipment);
-  console.log(result);
-  if(result === 200) {
-    res.send(shipment);
-  }else {
-    res.status(400).send('Something Wrong Happened with your shipment!..');
-  }
+  const freshShipment = req.body.shipment;
+  freshShipment.tracking_number = generateRandomId();
+  freshShipment.tracking_status = "60449851d69928531b6ecf46";
+  freshShipment.carrier = "60447ad3acb03a1502419517";
+
+  const shipment = new Shipment({...freshShipment});
+
+  shipment.save()
+  .then((result) => {
+    res.send(result);
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 });
 
 // Track Shipment
-app.get('/v1/track/', async (req, res) => {
+app.get('/v1/track-shipment', async (req, res) => {
   const tracking_number = parseInt(req.query.tracking_number);
   if(!tracking_number) return res.send(400).send("Enter the tracking number correctly!");
-  const shipment = await trackShipment(tracking_number);
-  if(!shipment) return res.status(404).send("Shipment not found..!"); 
-  res.send(shipment);
+  Shipment.findOne({ "tracking_number":  tracking_number}, {
+    "_id": 0,
+    "ship_from": 0,
+    "ship_to": 0,
+    "createdAt": 0,
+    "updatedAt": 0
+  })
+  .populate('tracking_status carrier')
+  .exec((err, shipment) => {
+    if(err) return res.send(err);
+    if(!shipment) return res.status(404).send("Shipment not found!");
+    res.send(shipment);
+  });
 });
 
 // Get Label of shipment/s
@@ -77,48 +108,19 @@ app.post('/v1/labelizer', async (req, res) => {
   .send('Tracking numbers are missing!');
 
   const trackingNumbers = req.body.trackingNumbers;
-  const shipments = await getShipment();
-
-  const requestedShipment = shipments.filter(sh => {
-    return trackingNumbers.includes(sh.shipment.tracking_number);
+  const shipments = await Shipment.find({ "tracking_number": {"$in": trackingNumbers}}, {
+    "_id": 0,
   })
+  
+  if(!shipments) return res.status(404).send("Shipments not found!");
 
-  if(requestedShipment.length === 0) return res.status(404).send("Shipments not found!");
-
+  // res.send(shipments);
   getLabel(res, requestedShipment);
 });
 
 // Hook
 app.get('/v1/hook', (req, res) => {
-   const newShipment = new Shipment({
-    tracking_number: generateRandomId(),
-    ship_to: {
-      name: "Safwan Saigh",
-      phone_number: "0534501056",
-      country: "Saudi Arabia",
-      city: "Jeddah",
-      postal_code: "23356",
-      address1: "As Salamah",
-      address2: "Ibn Udyes"
-    },
-    shi_from: {
-      name: "Fozan Alkhalawi",
-      phone_number: "0556800189",
-      country: "Saudi Arabia",
-      city: "Makkah",
-      postal_code: "98767",
-      address1: "Al Haram",
-      address2: "Saeed Khames"
-    }
-  });
 
-  newShipment.save()
-  .then((result) => {
-    res.send(result);
-  })
-  .catch((error) => {
-    console.log(error);
-  });
 });
 
 app.post('/v1/upload', upload.array('image', 1), (req, res) => {

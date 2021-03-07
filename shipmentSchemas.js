@@ -21,7 +21,7 @@ exports.shipmentSchema = Joi.object({
   shipment: Joi.object({
     ship_to: personSchema,
     ship_from: personSchema,
-    packages: Joi.array().items(packageSchema)
+    packages_weight: Joi.number()
   })
 });
 
