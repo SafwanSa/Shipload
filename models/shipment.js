@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const shipmentSchema = new Schema({
   tracking_number: {
-    type: number,
+    type: Number,
     required: true
   },
   ship_to: {
@@ -25,14 +25,14 @@ const shipmentSchema = new Schema({
     address1: String,
     address2: String
   },
-  tracking_status: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "TrackingStatus"
-  },
-  carrier: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Carrier"
-  }
+  // tracking_status: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "TrackingStatus"
+  // },
+  // carrier: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "Carrier"
+  // }
 });
 
 const Shipment = mongoose.model('Shipment', shipmentSchema);

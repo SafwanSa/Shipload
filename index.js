@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-
+const mongoose = require('mongoose');
+const Shipment = require('./models/shipment');
 
 const { shipmentSchema } = require('./shipmentSchemas');
 const { getLabel } = require('./label');
@@ -22,6 +23,18 @@ function generateRandomId() {
   return Math.round(Math.random() * Math.pow(10, 6));
 }
 
+const dbURL = "mongodb+srv://safwanoz:safwanoz@shipments-cluster.tapab.mongodb.net/shipmentsDB?retryWrites=true&w=majority";
+
+mongoose.connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true })
+.then(() => {
+  app.listen(port, () => {
+    console.log(`Server is listening to port: ${port}`)
+  });
+  console.log("Database connection established");
+})
+.catch((error) => {
+  console.log(error);
+});
 
 app.get('/v1', (_, res) => {
   res.send({"message": "Hello World"});
@@ -77,7 +90,35 @@ app.post('/v1/labelizer', async (req, res) => {
 
 // Hook
 app.get('/v1/hook', (req, res) => {
-    // uploadFile('./img.png');
+   const newShipment = new Shipment({
+    tracking_number: generateRandomId(),
+    ship_to: {
+      name: "Safwan Saigh",
+      phone_number: "0534501056",
+      country: "Saudi Arabia",
+      city: "Jeddah",
+      postal_code: "23356",
+      address1: "As Salamah",
+      address2: "Ibn Udyes"
+    },
+    shi_from: {
+      name: "Fozan Alkhalawi",
+      phone_number: "0556800189",
+      country: "Saudi Arabia",
+      city: "Makkah",
+      postal_code: "98767",
+      address1: "Al Haram",
+      address2: "Saeed Khames"
+    }
+  });
+
+  newShipment.save()
+  .then((result) => {
+    res.send(result);
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 });
 
 app.post('/v1/upload', upload.array('image', 1), (req, res) => {
@@ -88,6 +129,3 @@ app.post('/v1/upload', upload.array('image', 1), (req, res) => {
   res.send({ file: req.file });
  });
 
-app.listen(port, () => {
-  console.log(`Server is listening to port: ${port}`)
-});
