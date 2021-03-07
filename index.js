@@ -122,11 +122,11 @@ app.get('/v1/hook', (req, res) => {
 
 });
 
-app.post('/v1/upload', upload.array('image', 1), (req, res) => {
-  // Take as a request from the client two things: 
-  // file and the shipment id. Force the user to add attachments after adding a shipment.
+app.post('/v1/upload', upload.array('file', 3), (req, res) => {
+  
+  console.log(req.files);
   console.log(req.files[0].location);
-  // console.log(req.shipmentId);
+  console.log(req.body.shipmentId);
   res.send({ file: req.file });
  });
 

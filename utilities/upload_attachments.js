@@ -22,15 +22,15 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({
-fileFilter: fileFilter,
-storage: multerS3({
- s3,
- bucket: process.env.S3_BUCKET,
- key: function(req, file, cb) {
-   req.file = Date.now() + file.originalname;
-   cb(null, Date.now() + file.originalname);
-  }
- })
+  fileFilter: fileFilter,
+  storage: multerS3({
+    s3,
+    bucket: process.env.S3_BUCKET,
+    ey: function(req, file, cb) {
+      req.file = Date.now() + file.originalname;
+      cb(null, Date.now() + file.originalname);
+    }
+  })
 });
 
 module.exports = upload;
