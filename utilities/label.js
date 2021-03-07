@@ -40,7 +40,7 @@ function generatePDFPage(doc, shipment) {
   doc.fill('#000').stroke();
   doc.fontSize(16);
   doc.text(`Tracking No.: ${shipment.tracking_number}`, 32, 32, {lineBreak: false} );
-  doc.image('./barcode.jpg', 32, 50, {fit: [300, 100]})
+  doc.image('../assets/images/barcode.jpg', 32, 50, {fit: [300, 100]})
   doc.fontSize(12);
 
   doc.text(`Shipped From:\nSA, Jeddah\nAs Salamah\nIbn Udyes\n2625`, 32, 186 );
@@ -51,7 +51,7 @@ function generatePDFPage(doc, shipment) {
   doc.fill('#000').stroke();
   doc.text("Weight: 3kg\nDimensions\nHeight: 67cm\nWidth: 40cm", 32, (12*8*2 + 16 + 186) + 16 );
 
-  doc.image('./barcode.jpg', 150, (12*8*2 + 16 + 186) + 16, {fit: [100, 100]})
+  doc.image('../assets/images/barcode.jpg', 150, (12*8*2 + 16 + 186) + 16, {fit: [100, 100]})
 }
 
 module.exports = label;

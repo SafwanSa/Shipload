@@ -5,8 +5,8 @@ const Shipment = require('./models/shipment');
 const TrackingStatus = require('./models/trackingStatus');
 
 const { shipmentSchema } = require('./schemas/shipmentSchemas');
-const label = require('./label');
-const upload = require('./upload_attachments.js');
+const label = require('./utilities/label');
+const upload = require('./utilities/upload_attachments.js');
 
 const port = process.env.PORT || 30000;
 const app = express();
