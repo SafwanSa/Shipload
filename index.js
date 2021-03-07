@@ -51,6 +51,7 @@ app.get('/v1/shipments', async (_, res) => {
   })
 });
 
+// Lists all tracking statuses
 app.get('/v1/statuses', async (_, res) => {
   TrackingStatus.find()
   .then((result) => {
@@ -122,11 +123,20 @@ app.get('/v1/hook', (req, res) => {
 
 });
 
-app.post('/v1/upload', upload.array('file', 3), (req, res) => {
-  
-  console.log(req.files);
-  console.log(req.files[0].location);
-  console.log(req.body.shipmentId);
-  res.send({ file: req.file });
+// upload attachments to a shipment
+app.post('/v1/upload-attachments', upload.array('file', 3), async (req, res) => {
+  const shipmentId = req.body.shipmentId;
+  if(!shipmentId) return res.status(404).send("Shipment not found!");
+  const shipment = await Shipment.findOne({"_id": shipmentId});
+  for(let file of req.files) {
+    shipment.attachments.push(file.location)
+  }
+  shipment.save()
+    .then((_) => {
+      res.send({ file: req.file });
+    }).catch((error) => {
+      console.log(error);
+      res.send({ file: req.file });
+    })
  });
 

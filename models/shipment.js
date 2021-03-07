@@ -35,6 +35,7 @@ const shipmentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "TrackingStatus"
   },
+  attachments: [String],
   packages_weight: Number
 }, { timestamps: true });
 
