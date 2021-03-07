@@ -26,9 +26,9 @@ const upload = multer({
   storage: multerS3({
     s3,
     bucket: process.env.S3_BUCKET,
-    ey: function(req, file, cb) {
-      req.file = Date.now() + file.originalname;
-      cb(null, Date.now() + file.originalname);
+    key: function(req, file, cb) {
+      req.file = `${Date.now()}-${file.originalname}`;
+      cb(null, `${Date.now()}-${file.originalname}`);
     }
   })
 });
