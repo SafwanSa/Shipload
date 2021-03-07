@@ -1,7 +1,8 @@
 const PDFDocument = require('pdfkit');
 const { Base64Encode } = require('base64-stream');
 const fs = require('fs');
-exports.getLabel = function (res, shipments) {
+
+const label = function (res, shipments) {
   var doc = new PDFDocument();
   
   // doc.pipe(fs.createWriteStream('output.pdf'));
@@ -52,3 +53,5 @@ function generatePDFPage(doc, shipment) {
 
   doc.image('./barcode.jpg', 150, (12*8*2 + 16 + 186) + 16, {fit: [100, 100]})
 }
+
+module.exports = label;

@@ -4,11 +4,8 @@ const mongoose = require('mongoose');
 const Shipment = require('./models/shipment');
 const TrackingStatus = require('./models/trackingStatus');
 
-const { shipmentSchema } = require('./shipmentSchemas');
-const { getLabel } = require('./label');
-const createShipment = require('./create_shipment');
-const getShipment = require('./get_shipments');
-const trackShipment = require('./track_shipment');
+const { shipmentSchema } = require('./schemas/shipmentSchemas');
+const label = require('./label');
 const upload = require('./upload_attachments.js');
 
 const port = process.env.PORT || 30000;
@@ -102,7 +99,7 @@ app.get('/v1/track-shipment', async (req, res) => {
 });
 
 // Get Label of shipment/s
-app.post('/v1/labelizer', async (req, res) => {
+app.post('/v1/get-label', async (req, res) => {
   // There is a value in the body called trackingNumbers
   if(!req.body.trackingNumbers) return res.status(400)
   .send('Tracking numbers are missing!');
@@ -115,7 +112,7 @@ app.post('/v1/labelizer', async (req, res) => {
   if(!shipments) return res.status(404).send("Shipments not found!");
 
   // res.send(shipments);
-  getLabel(res, requestedShipment);
+  label(res, requestedShipment);
 });
 
 // Hook
