@@ -143,25 +143,27 @@ app.post('/v1/upload-attachments', upload.array('file', 3), async (req, res) => 
     })
  });
 
-
-
-app.post('/v1/register', (req, res) => {
-   const { error } = validateUser(req.body, 'register');
-   if(error) return res.status(400).send(error.details[0].message);
+app.post('/v1/register', async (req, res) => {
+  const { error } = validateUser(req.body, 'register');
+  if(error) return res.status(400).send(error.details[0].message);
    
-   const user = new User({
-     name: req.body.name,
-     email: req.body.email,
-     password: req.body.password,
-   })
+  const userExist = await User.findOne({ email: req.body.email });
 
-   user.save()
-   .then((result) => {
-    res.send(result);
-   })
-   .catch((error) => {
-     res.status(400).send(error);
-   });
+  if(userExist) return res.status(400).send(`User with email ${req.body.email} already exists!`);
+  
+  const user = new User({
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
+  })
+
+  user.save()
+  .then((result) => {
+  res.send(result);
+  })
+  .catch((error) => {
+    res.status(400).send(error);
+  });
 });
 
 
