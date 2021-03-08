@@ -140,3 +140,8 @@ app.post('/v1/upload-attachments', upload.array('file', 3), async (req, res) => 
     })
  });
 
+
+
+ app.post('/v1/register', (req, res) => {
+    res.send("User Registered");
+  });
