@@ -10,7 +10,8 @@ const TrackingStatus = require('./models/trackingStatus');
 const User = require('./models/user');
 
 const login = require('./auth/login');
-const validateUser = require('./schemas/user_schema');
+const register = require('./auth/register');
+
 const { shipmentSchema } = require('./schemas/shipmentSchemas');
 const label = require('./utilities/label');
 const upload = require('./utilities/upload_attachments.js');
@@ -160,33 +161,12 @@ app.post('/v1/upload-attachments', upload.array('file', 3), async (req, res) => 
     })
  });
 
+// Register a user
 app.post('/v1/register', async (req, res) => {
-  const { error } = validateUser(req.body, 'register');
-  if(error) return res.status(400).send(error.details[0].message);
-   
-  const userExist = await User.findOne({ email: req.body.email });
-
-  if(userExist) return res.status(400).send(`User with email ${req.body.email} already exists!`);
-
-  // Hashing the password
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(req.body.password, salt);
-
-  const user = new User({
-    name: req.body.name,
-    email: req.body.email,
-    password: hashedPassword,
-  })
-
-  user.save()
-  .then((result) => {
-    res.send({ user_id: result._id });
-  })
-  .catch((error) => {
-    res.status(400).send(error);
-  });
+  register(req, res);
 });
 
+// Login a user
 app.post('/v1/login', async (req, res) => {
   login(req, res);
 });
