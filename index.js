@@ -165,7 +165,7 @@ app.post('/v1/register', async (req, res) => {
 
   user.save()
   .then((result) => {
-  res.send(result);
+    res.send({ user_id: result._id });
   })
   .catch((error) => {
     res.status(400).send(error);
