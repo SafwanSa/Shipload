@@ -1,10 +1,16 @@
 const express = require('express');
 const cors = require('cors');
+
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+
 const Shipment = require('./models/shipment');
 const TrackingStatus = require('./models/trackingStatus');
 
-const { shipmentSchema } = require('./schemas/shipmentSchemas');
+const login = require('./auth/login');
+const register = require('./auth/register');
+
+const validateShipment = require('./schemas/shipmentSchemas');
 const label = require('./utilities/label');
 const upload = require('./utilities/upload_attachments.js');
 
@@ -13,9 +19,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-function validateShipment(shipment) {
-  return shipmentSchema.validate(shipment);
-}
 
 function generateRandomId() {
   return Math.round(Math.random() * Math.pow(10, 6));
@@ -32,6 +35,18 @@ function dbConnect() {
     .catch((error) => {
       console.log(error);
     });
+}
+
+function auth(req, res, next) {
+  const token = req.header('auth_token');
+  if(!token) return res.status(401).send('Access Denied!');
+  try {
+    const verified = jwt.verify(token, process.env.TOKEN_SECRET);
+    req.user = verified;
+    next();
+  } catch(err) {
+    res.status(400).send('Invalid Token!');
+  }
 }
 
 dbConnect();
@@ -119,9 +134,9 @@ app.post('/v1/get-label', async (req, res) => {
 });
 
 // Hook
-app.get('/v1/hook', (req, res) => {
+// app.get('/v1/hook', (req, res) => {
 
-});
+// });
 
 // upload attachments to a shipment
 app.post('/v1/upload-attachments', upload.array('file', 3), async (req, res) => {
@@ -140,3 +155,16 @@ app.post('/v1/upload-attachments', upload.array('file', 3), async (req, res) => 
     })
  });
 
+// Register a user
+app.post('/v1/register', async (req, res) => {
+  register(req, res);
+});
+
+// Login a user
+app.post('/v1/login', async (req, res) => {
+  login(req, res);
+});
+
+app.get('/v1/token', auth, (_, res) => {
+  res.json({message: 'This is a private endpoint'});
+});
