@@ -1,30 +1,24 @@
 const express = require('express');
 const cors = require('cors');
 
-const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 
 const Shipment = require('./models/shipment');
 const TrackingStatus = require('./models/trackingStatus');
-const User = require('./models/user');
 
 const login = require('./auth/login');
 const register = require('./auth/register');
 
-const { shipmentSchema } = require('./schemas/shipmentSchemas');
+const validateShipment = require('./schemas/shipmentSchemas');
 const label = require('./utilities/label');
 const upload = require('./utilities/upload_attachments.js');
-const { json } = require('express');
 
 const port = process.env.PORT || 30000;
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-function validateShipment(shipment) {
-  return shipmentSchema.validate(shipment);
-}
 
 function generateRandomId() {
   return Math.round(Math.random() * Math.pow(10, 6));
