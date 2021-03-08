@@ -172,6 +172,16 @@ app.post('/v1/register', async (req, res) => {
   });
 });
 
-app.post('v1/login', (req, res) => {
-  
+app.post('/v1/login', async (req, res) => {
+  const { error } = validateUser(req.body, 'login');
+  if(error) return res.status(400).send(error.details[0].message);
+
+  const user = await User.findOne({ email: req.body.email });
+  if(!user) return res.status(400).send(`Incorrect credentials!`);
+
+  const validPass = await bcrypt.compare(req.body.password, user.password);
+
+  if(!validPass) return res.status(400).send(`Incorrect credentials!`);
+
+  res.send('Logged in');
 });
