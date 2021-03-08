@@ -145,9 +145,9 @@ app.post('/v1/upload-attachments', upload.array('file', 3), async (req, res) => 
 
 
 
- app.post('/v1/register', (req, res) => {
-   const error = validateUser(req.body);
-   if(error) return res.status(400).send(error.error.details[0].message);
+app.post('/v1/register', (req, res) => {
+   const { error } = validateUser(req.body, 'register');
+   if(error) return res.status(400).send(error.details[0].message);
    
    const user = new User({
      name: req.body.name,
@@ -162,5 +162,9 @@ app.post('/v1/upload-attachments', upload.array('file', 3), async (req, res) => 
    .catch((error) => {
      res.status(400).send(error);
    });
+});
 
-  });
+
+app.post('v1/login', (req, res) => {
+  
+});
