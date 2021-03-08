@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 
+const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
+
 const Shipment = require('./models/shipment');
 const TrackingStatus = require('./models/trackingStatus');
 const User = require('./models/user');
@@ -150,11 +152,15 @@ app.post('/v1/register', async (req, res) => {
   const userExist = await User.findOne({ email: req.body.email });
 
   if(userExist) return res.status(400).send(`User with email ${req.body.email} already exists!`);
-  
+
+  // Hashing the password
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
   const user = new User({
     name: req.body.name,
     email: req.body.email,
-    password: req.body.password,
+    password: hashedPassword,
   })
 
   user.save()
@@ -165,7 +171,6 @@ app.post('/v1/register', async (req, res) => {
     res.status(400).send(error);
   });
 });
-
 
 app.post('v1/login', (req, res) => {
   
