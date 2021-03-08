@@ -1,9 +1,12 @@
 const express = require('express');
 const cors = require('cors');
+
 const mongoose = require('mongoose');
 const Shipment = require('./models/shipment');
 const TrackingStatus = require('./models/trackingStatus');
+const User = require('./models/user');
 
+const validateUser = require('./schemas/user_schema');
 const { shipmentSchema } = require('./schemas/shipmentSchemas');
 const label = require('./utilities/label');
 const upload = require('./utilities/upload_attachments.js');
@@ -143,5 +146,21 @@ app.post('/v1/upload-attachments', upload.array('file', 3), async (req, res) => 
 
 
  app.post('/v1/register', (req, res) => {
-    res.send("User Registered");
+   const error = validateUser(req.body);
+   if(error) return res.status(400).send(error.error.details[0].message);
+   
+   const user = new User({
+     name: req.body.name,
+     email: req.body.email,
+     password: req.body.password,
+   })
+
+   user.save()
+   .then((result) => {
+    res.send(result);
+   })
+   .catch((error) => {
+     res.status(400).send(error);
+   });
+
   });
