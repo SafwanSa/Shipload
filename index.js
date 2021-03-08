@@ -9,6 +9,7 @@ const Shipment = require('./models/shipment');
 const TrackingStatus = require('./models/trackingStatus');
 const User = require('./models/user');
 
+const login = require('./auth/login');
 const validateUser = require('./schemas/user_schema');
 const { shipmentSchema } = require('./schemas/shipmentSchemas');
 const label = require('./utilities/label');
@@ -187,19 +188,7 @@ app.post('/v1/register', async (req, res) => {
 });
 
 app.post('/v1/login', async (req, res) => {
-  const { error } = validateUser(req.body, 'login');
-  if(error) return res.status(400).send(error.details[0].message);
-
-  const user = await User.findOne({ email: req.body.email });
-  if(!user) return res.status(400).send(`Incorrect credentials!`);
-
-  const validPass = await bcrypt.compare(req.body.password, user.password);
-
-  if(!validPass) return res.status(400).send(`Incorrect credentials!`);
-
-  // Create and assign token
-  const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
-  res.header('auth_token', token).send(token);
+  login(req, res);
 });
 
 app.get('/v1/token', auth, (req, res) => {
