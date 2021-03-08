@@ -3,6 +3,7 @@ const cors = require('cors');
 
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 
 const Shipment = require('./models/shipment');
 const TrackingStatus = require('./models/trackingStatus');
@@ -12,6 +13,7 @@ const validateUser = require('./schemas/user_schema');
 const { shipmentSchema } = require('./schemas/shipmentSchemas');
 const label = require('./utilities/label');
 const upload = require('./utilities/upload_attachments.js');
+const { json } = require('express');
 
 const port = process.env.PORT || 30000;
 const app = express();
@@ -37,6 +39,18 @@ function dbConnect() {
     .catch((error) => {
       console.log(error);
     });
+}
+
+function auth(req, res, next) {
+  const token = req.header('auth_token');
+  if(!token) return res.status(401).send('Access Denied!');
+  try {
+    const verified = jwt.verify(token, process.env.TOKEN_SECRET);
+    req.user = verified;
+    next();
+  } catch(err) {
+    res.status(400).send('Invalid Token!');
+  }
 }
 
 dbConnect();
@@ -183,5 +197,11 @@ app.post('/v1/login', async (req, res) => {
 
   if(!validPass) return res.status(400).send(`Incorrect credentials!`);
 
-  res.send('Logged in');
+  // Create and assign token
+  const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+  res.header('auth_token', token).send(token);
+});
+
+app.get('/v1/token', auth, (req, res) => {
+  res.json({message: 'This is a private endpoint'});
 });
