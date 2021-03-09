@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 require('./carrier');
-require('./event');
+require('./trackingStatus');
 
 const Schema = mongoose.Schema;
 

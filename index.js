@@ -85,12 +85,12 @@ app.post('/v1/create-shipment', async (req, res) => {
   freshShipment.tracking_number = generateRandomId();
   freshShipment.events = [{
     occurred_at: Date().toString(),
-    description: "First event description",
-    country: "Saudi Arabia",
-    city: "Jeddah",
+    description: "Shipment established",
+    country: freshShipment.ship_from.country,
+    city: freshShipment.ship_from.city,
     tracking_status: "60449851d69928531b6ecf46"
   }];
-  freshShipment.carrier = "60447ad3acb03a1502419517";
+  freshShipment.carrier = "60447ad3acb03a1502419517"; // Get this from the request
 
   const shipment = new Shipment({...freshShipment});
 
@@ -115,8 +115,14 @@ app.get('/v1/track-shipment', async (req, res) => {
     "updatedAt": 0
   })
   .populate([
-    { path: 'carrier', select: { '_id': 0 }},
-    { path: 'events.tracking_status', select: { '_id': 0, '__v': 0 }}
+    {
+      path: 'carrier',
+      select: { '_id': 0 }
+    },
+    { 
+      path: 'events.tracking_status',
+      select: { '_id': 0, '__v': 0 }
+    }
   ])
   .exec((err, shipment) => {
     if(err) return res.send(err);
