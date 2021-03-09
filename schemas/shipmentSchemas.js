@@ -10,13 +10,11 @@ const personSchema = Joi.object({
 });
 
 const shipmentSchema = Joi.object({
-  shipment: Joi.object({
-    ship_to: personSchema,
-    ship_from: personSchema,
-    packages_weight: Joi.number(),
-    packages_quantity: Joi.number(),
-    description: Joi.string()
-  })
+  ship_to: personSchema,
+  ship_from: personSchema,
+  packages_weight: Joi.number(),
+  packages_quantity: Joi.number(),
+  description: Joi.string()
 });
 
 // exports.trackShipmentSchema = Joi.object({

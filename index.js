@@ -101,7 +101,7 @@ app.get('/v1/carriers', async (_, res) => {
 
 // Add Shipment
 app.post('/v1/create-shipment', async (req, res) => {
-  const { error } = validateShipment(req.body);
+  const { error } = validateShipment(req.body.shipment);
   if(error) return res.status(400).send(error.details[0].message);
   const freshShipment = req.body.shipment;
   freshShipment.tracking_number = generateRandomId();
@@ -112,7 +112,14 @@ app.post('/v1/create-shipment', async (req, res) => {
     city: freshShipment.ship_from.city,
     tracking_status: "60449851d69928531b6ecf46"
   }];
-  freshShipment.carrier = "60447ad3acb03a1502419517"; // Get this from the request
+  
+  // Extra checking to prevent the carrier to be null
+  let carrierId = req.body.carrier_id;
+  if(!carrierId) {
+    carrierId = `${(await Carrier.findOne({ code: 'n/a' }))._id}`;
+  }
+
+  freshShipment.carrier = carrierId;
 
   const shipment = new Shipment({...freshShipment});
 
@@ -120,8 +127,8 @@ app.post('/v1/create-shipment', async (req, res) => {
   .then((result) => {
     res.send(result);
   })
-  .catch((error) => {
-    console.log(error);
+  .catch((err) => {
+    console.log(err);
   });
 });
 
