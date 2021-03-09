@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 require('./carrier');
-require('./trackingStatus');
+require('./event');
 
 const Schema = mongoose.Schema;
 
@@ -31,10 +31,10 @@ const shipmentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Carrier"
   },
-  tracking_status: {
+  events: [{
     type: Schema.Types.ObjectId,
-    ref: "TrackingStatus"
-  },
+    ref: "Event"
+  }],
   attachments: [String],
   packages_weight: Number
 }, { timestamps: true });

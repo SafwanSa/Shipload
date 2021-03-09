@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+require('./trackingStatus');
 
 const Schema = mongoose.Schema;
 
