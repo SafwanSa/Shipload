@@ -42,7 +42,9 @@ const shipmentSchema = new Schema({
     }
   }],
   attachments: [String],
-  packages_weight: Number
+  packages_weight: Number,
+  packages_quantity: Number,
+  description: String
 }, { timestamps: true });
 
 const Shipment = mongoose.model('Shipment', shipmentSchema);
