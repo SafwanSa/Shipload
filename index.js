@@ -133,11 +133,6 @@ app.post('/v1/get-label', async (req, res) => {
   label(res, requestedShipment);
 });
 
-// Hook
-// app.get('/v1/hook', (req, res) => {
-
-// });
-
 // upload attachments to a shipment
 app.post('/v1/upload-attachments', upload.array('file', 3), async (req, res) => {
   const shipmentId = req.body.shipmentId;
@@ -166,5 +161,5 @@ app.post('/v1/login', async (req, res) => {
 });
 
 app.get('/v1/token', auth, (_, res) => {
-  res.json({message: 'This is a private endpoint'});
+  res.json({ message: 'This is a private endpoint' });
 });
