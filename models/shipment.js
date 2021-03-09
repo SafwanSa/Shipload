@@ -32,8 +32,14 @@ const shipmentSchema = new Schema({
     ref: "Carrier"
   },
   events: [{
-    type: Schema.Types.ObjectId,
-    ref: "Event"
+    occurred_at: String,
+    description: String,
+    country: String,
+    city: String,
+    tracking_status: {
+      type: Schema.Types.ObjectId,
+      ref: 'TrackingStatus'
+    }
   }],
   attachments: [String],
   packages_weight: Number

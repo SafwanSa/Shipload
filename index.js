@@ -83,7 +83,13 @@ app.post('/v1/create-shipment', async (req, res) => {
   if(error) return res.status(400).send(error.details[0].message);
   const freshShipment = req.body.shipment;
   freshShipment.tracking_number = generateRandomId();
-  freshShipment.tracking_status = "60449851d69928531b6ecf46";
+  freshShipment.events = [{
+    occurred_at: Date().toString(),
+    description: "First event description",
+    country: "Saudi Arabia",
+    city: "Jeddah",
+    tracking_status: "60449851d69928531b6ecf46"
+  }];
   freshShipment.carrier = "60447ad3acb03a1502419517";
 
   const shipment = new Shipment({...freshShipment});
@@ -108,7 +114,10 @@ app.get('/v1/track-shipment', async (req, res) => {
     "createdAt": 0,
     "updatedAt": 0
   })
-  .populate('tracking_status carrier')
+  .populate([
+    { path: 'carrier', select: { '_id': 0 }},
+    { path: 'events.tracking_status', select: { '_id': 0, '__v': 0 }}
+  ])
   .exec((err, shipment) => {
     if(err) return res.send(err);
     if(!shipment) return res.status(404).send("Shipment not found!");
