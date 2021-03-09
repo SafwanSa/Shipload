@@ -31,12 +31,20 @@ const shipmentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Carrier"
   },
-  tracking_status: {
-    type: Schema.Types.ObjectId,
-    ref: "TrackingStatus"
-  },
+  events: [{
+    occurred_at: String,
+    description: String,
+    country: String,
+    city: String,
+    tracking_status: {
+      type: Schema.Types.ObjectId,
+      ref: 'TrackingStatus'
+    }
+  }],
   attachments: [String],
-  packages_weight: Number
+  packages_weight: Number,
+  packages_quantity: Number,
+  description: String
 }, { timestamps: true });
 
 const Shipment = mongoose.model('Shipment', shipmentSchema);

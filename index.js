@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 
 const Shipment = require('./models/shipment');
 const TrackingStatus = require('./models/trackingStatus');
+const Carrier = require('./models/carrier');
 
 const login = require('./auth/login');
 const register = require('./auth/register');
@@ -58,16 +59,25 @@ app.get('/v1', (_, res) => {
 // List all shipments
 app.get('/v1/shipments', async (_, res) => {
  Shipment.find()
-  .then((result) => {
-    res.send(result);
-  })
-  .catch((error) => {
-    res.status(404).send(error);
+  .populate([
+    {
+      path: 'carrier',
+      select: { '_id': 0 }
+    },
+    { 
+      path: 'events.tracking_status',
+      select: { '_id': 0, '__v': 0 }
+    }
+  ])
+  .exec((shipments, error) => {
+    if(error) return res.send(error);
+    if(!shipments) return res.status(404).send('There are no shipments!');
+    res.send(shipments);
   })
 });
 
 // Lists all tracking statuses
-app.get('/v1/statuses', async (_, res) => {
+app.get('/v1/tracking-statuses', async (_, res) => {
   TrackingStatus.find()
   .then((result) => {
     res.send(result);
@@ -77,14 +87,32 @@ app.get('/v1/statuses', async (_, res) => {
   });
 });
 
+// List all carriers
+app.get('/v1/carriers', async (_, res) => {
+  Carrier.find()
+  .then((result) => {
+    res.send(result);
+  }).catch((err) => {
+    console.log(err);
+    res.send(err);
+  });
+});
+
+
 // Add Shipment
 app.post('/v1/create-shipment', async (req, res) => {
   const { error } = validateShipment(req.body);
   if(error) return res.status(400).send(error.details[0].message);
   const freshShipment = req.body.shipment;
   freshShipment.tracking_number = generateRandomId();
-  freshShipment.tracking_status = "60449851d69928531b6ecf46";
-  freshShipment.carrier = "60447ad3acb03a1502419517";
+  freshShipment.events = [{
+    occurred_at: Date().toString(),
+    description: "Shipment established",
+    country: freshShipment.ship_from.country,
+    city: freshShipment.ship_from.city,
+    tracking_status: "60449851d69928531b6ecf46"
+  }];
+  freshShipment.carrier = "60447ad3acb03a1502419517"; // Get this from the request
 
   const shipment = new Shipment({...freshShipment});
 
@@ -108,7 +136,16 @@ app.get('/v1/track-shipment', async (req, res) => {
     "createdAt": 0,
     "updatedAt": 0
   })
-  .populate('tracking_status carrier')
+  .populate([
+    {
+      path: 'carrier',
+      select: { '_id': 0 }
+    },
+    { 
+      path: 'events.tracking_status',
+      select: { '_id': 0, '__v': 0 }
+    }
+  ])
   .exec((err, shipment) => {
     if(err) return res.send(err);
     if(!shipment) return res.status(404).send("Shipment not found!");
