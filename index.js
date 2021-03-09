@@ -58,11 +58,20 @@ app.get('/v1', (_, res) => {
 // List all shipments
 app.get('/v1/shipments', async (_, res) => {
  Shipment.find()
-  .then((result) => {
-    res.send(result);
-  })
-  .catch((error) => {
-    res.status(404).send(error);
+  .populate([
+    {
+      path: 'carrier',
+      select: { '_id': 0 }
+    },
+    { 
+      path: 'events.tracking_status',
+      select: { '_id': 0, '__v': 0 }
+    }
+  ])
+  .exec((shipments, error) => {
+    if(error) return res.send(error);
+    if(!shipments) return res.status(404).send('There are no shipments!');
+    res.send(shipments);
   })
 });
 
