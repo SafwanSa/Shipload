@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 
 const Shipment = require('./models/shipment');
 const TrackingStatus = require('./models/trackingStatus');
+const Carrier = require('./models/carrier');
 
 const login = require('./auth/login');
 const register = require('./auth/register');
@@ -76,7 +77,7 @@ app.get('/v1/shipments', async (_, res) => {
 });
 
 // Lists all tracking statuses
-app.get('/v1/statuses', async (_, res) => {
+app.get('/v1/tracking-statuses', async (_, res) => {
   TrackingStatus.find()
   .then((result) => {
     res.send(result);
@@ -85,6 +86,18 @@ app.get('/v1/statuses', async (_, res) => {
     res.send(err);
   });
 });
+
+// List all carriers
+app.get('/v1/carriers', async (_, res) => {
+  Carrier.find()
+  .then((result) => {
+    res.send(result);
+  }).catch((err) => {
+    console.log(err);
+    res.send(err);
+  });
+});
+
 
 // Add Shipment
 app.post('/v1/create-shipment', async (req, res) => {
