@@ -57,7 +57,7 @@ app.get('/v1', (_, res) => {
 });
 
 // List all shipments
-app.get('/v1/shipments', async (_, res) => {
+app.get('/v1/shipments', auth, async (_, res) => {
  Shipment.find()
   .populate([
     {
@@ -77,7 +77,7 @@ app.get('/v1/shipments', async (_, res) => {
 });
 
 // Lists all tracking statuses
-app.get('/v1/tracking-statuses', async (_, res) => {
+app.get('/v1/tracking-statuses', auth, async (_, res) => {
   TrackingStatus.find()
   .then((result) => {
     res.send(result);
@@ -88,7 +88,7 @@ app.get('/v1/tracking-statuses', async (_, res) => {
 });
 
 // List all carriers
-app.get('/v1/carriers', async (_, res) => {
+app.get('/v1/carriers', auth, async (_, res) => {
   Carrier.find()
   .then((result) => {
     res.send(result);
@@ -98,9 +98,8 @@ app.get('/v1/carriers', async (_, res) => {
   });
 });
 
-
 // Add Shipment
-app.post('/v1/create-shipment', async (req, res) => {
+app.post('/v1/create-shipment', auth, async (req, res) => {
   const { error } = validateShipment(req.body.shipment);
   if(error) return res.status(400).send(error.details[0].message);
   const freshShipment = req.body.shipment;
@@ -161,7 +160,7 @@ app.get('/v1/track-shipment', async (req, res) => {
 });
 
 // Get Label of shipment/s
-app.post('/v1/get-label', async (req, res) => {
+app.post('/v1/get-label', auth, async (req, res) => {
   if(!req.body.trackingNumbers) return res.status(400)
   .send('Tracking numbers are missing!');
 
@@ -176,7 +175,7 @@ app.post('/v1/get-label', async (req, res) => {
 });
 
 // upload attachments to a shipment
-app.post('/v1/upload-attachments', upload.array('file', 3), async (req, res) => {
+app.post('/v1/upload-attachments', auth, upload.array('file', 3), async (req, res) => {
   const shipmentId = req.body.shipmentId;
   if(!shipmentId) return res.status(404).send("Shipment not found!");
   const shipment = await Shipment.findOne({"_id": shipmentId});
@@ -200,8 +199,4 @@ app.post('/v1/register', async (req, res) => {
 // Login a user
 app.post('/v1/login', async (req, res) => {
   login(req, res);
-});
-
-app.get('/v1/token', auth, (_, res) => {
-  res.json({ message: 'This is a private endpoint' });
 });
