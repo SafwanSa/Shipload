@@ -1,7 +1,4 @@
 const PDFDocument = require('pdfkit');
-const { Base64Encode } = require('base64-stream');
-const fs = require('fs');
-const upload = require('./upload_attachments');
 const dotenv = require('dotenv');
 const aws = require('aws-sdk');
 
@@ -64,7 +61,6 @@ async function uploadFile(res, shipments) {
         pdfData = null;
         thisPDF = null;
         if(err) res.stats(400).send('Error while getting the labels!');
-        
         res.send(data.Location);
       });
     });
