@@ -12,6 +12,7 @@ const personSchema = Joi.object({
 const shipmentSchema = Joi.object({
   ship_to: personSchema,
   ship_from: personSchema,
+  arrived_at: Joi.string().required(),
   packages_weight: Joi.number(),
   packages_quantity: Joi.number(),
   description: Joi.string()

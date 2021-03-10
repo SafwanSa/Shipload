@@ -9,6 +9,7 @@ const shipmentSchema = new Schema({
     type: Number,
     required: true
   },
+  arrived_at: String,
   ship_to: {
     name: String,
     phone_number: String,
