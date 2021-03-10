@@ -14,7 +14,7 @@ const login = async (req, res) => {
   if(!validPassword) return res.status(400).send(`Incorrect credentials!`);
 
   const token = await getToken(user);
-  res.header('auth_token', token)
+  res.header('auth-token', token)
   .send({ message:"User logged in successfully" });
 };
 
