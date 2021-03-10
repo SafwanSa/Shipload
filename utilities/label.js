@@ -23,13 +23,13 @@ function generatePDFPage(doc, shipment) {
   doc.image('./barcode.jpg', 32, 50, {fit: [300, 100]})
   doc.fontSize(12);
 
-  doc.text(`Shipped From:\n${shipment.ship_from.country}, ${shipment.ship_from.city}\n${shipment.ship_from.address1}\n${shipment.ship_from.address2 | ''}\n${shipment.ship_from.postal_code}`, 32, 186 );
+  doc.text(`Shipped From:\n${shipment.ship_from.country}, ${shipment.ship_from.city}\n${shipment.ship_from.address1}\n${shipment.ship_from.address2===undefined ? '' : shipment.ship_from.address2}\n${shipment.ship_from.postal_code}`, 32, 186 );
 
-  doc.text("Shipped To:\nSA, Riyadh\nBarchal\nSaoud\n23335", 32, 12*8 + 16 + 186 );
+  doc.text(`Shipped To:\n${shipment.ship_to.country}, ${shipment.ship_to.city}\n${shipment.ship_to.address1}\n${shipment.ship_to.address2===undefined ? '' : shipment.ship_to.address2}\n${shipment.ship_to.postal_code}`, 32, 12*8 + 16 + 186 );
 
   doc.rect(16, (12*8*2 + 16 + 186), 250, 100).fillAndStroke('#fff', '#000');
   doc.fill('#000').stroke();
-  doc.text("Weight: 3kg\nDimensions\nHeight: 67cm\nWidth: 40cm", 32, (12*8*2 + 16 + 186) + 16 );
+  doc.text(`Weight: ${shipment.packages_weight}kg\nItems: ${shipment.packages_quantity}`, 32, (12*8*2 + 16 + 186) + 16 );
 
   doc.image('./barcode.jpg', 150, (12*8*2 + 16 + 186) + 16, {fit: [100, 100]})
 }
@@ -47,7 +47,6 @@ async function uploadFile(res, shipments) {
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
       });
-      console.log("dd");
       const s3 = new aws.S3();
       const fileName = 'shipments_labels';
       const s3Params = {
