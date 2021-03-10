@@ -162,7 +162,6 @@ app.get('/v1/track-shipment', async (req, res) => {
 
 // Get Label of shipment/s
 app.post('/v1/get-label', async (req, res) => {
-  // There is a value in the body called trackingNumbers
   if(!req.body.trackingNumbers) return res.status(400)
   .send('Tracking numbers are missing!');
 
@@ -173,8 +172,7 @@ app.post('/v1/get-label', async (req, res) => {
   
   if(!shipments) return res.status(404).send("Shipments not found!");
 
-  // res.send(shipments);
-  label(res, requestedShipment);
+  label(res, shipments);
 });
 
 // upload attachments to a shipment

@@ -40,10 +40,11 @@ function generatePDFPage(doc, shipment) {
   doc.fill('#000').stroke();
   doc.fontSize(16);
   doc.text(`Tracking No.: ${shipment.tracking_number}`, 32, 32, {lineBreak: false} );
-  doc.image('../assets/images/barcode.jpg', 32, 50, {fit: [300, 100]})
+  const path = '../images/barcode.jpg';
+  doc.image(path, 32, 50, {fit: [300, 100]})
   doc.fontSize(12);
 
-  doc.text(`Shipped From:\nSA, Jeddah\nAs Salamah\nIbn Udyes\n2625`, 32, 186 );
+  doc.text(`Shipped From:\n${shipment.ship_from.country}, ${shipment.ship_from.city}\n${shipment.ship_from.address1}\n${shipment.ship_from.address2 | ''}\n${shipment.ship_from.postal_code}`, 32, 186 );
 
   doc.text("Shipped To:\nSA, Riyadh\nBarchal\nSaoud\n23335", 32, 12*8 + 16 + 186 );
 
@@ -51,7 +52,7 @@ function generatePDFPage(doc, shipment) {
   doc.fill('#000').stroke();
   doc.text("Weight: 3kg\nDimensions\nHeight: 67cm\nWidth: 40cm", 32, (12*8*2 + 16 + 186) + 16 );
 
-  doc.image('../assets/images/barcode.jpg', 150, (12*8*2 + 16 + 186) + 16, {fit: [100, 100]})
+  doc.image(path, 150, (12*8*2 + 16 + 186) + 16, {fit: [100, 100]})
 }
 
 module.exports = label;
